@@ -19,7 +19,8 @@ const encoder = new TextEncoder();
 
   const global = {
 	  offset: 0,
-	  ctx: null,
+    ctx: null,
+    canvas: null,
 	  size: null
   }
 
@@ -74,27 +75,34 @@ const encoder = new TextEncoder();
 
           const image = new ImageData(pixbuf, global.size.width);
           global.ctx.putImageData(image, 0, 0);
-          global.ctx.commit();
+          const bitmap = global.canvas.transferToImageBitmap();
+          self.postMessage({
+            id: "render",
+            bitmap,
+            progress: Math.min(global.offset / (global.size.width * global.size.height), 1) 
+          }, [bitmap])
         },
       },
     }
   );
 
   self.onmessage = msg => {
-	  const { file, size, canvas } = msg.data
-	  const ctx = canvas.getContext('2d', {
-		alpha: false,
-	   });
+    const { file, size } = msg.data
+    
+    const canvas = new OffscreenCanvas(size.width, size.height);
 
-	   global.ctx = ctx;
-	   global.size = size;
-	   global.offset = 0
+	  const ctx = canvas.getContext('2d');
+
+    global.ctx = ctx;
+    global.canvas = canvas;
+    global.size = size;
+    global.offset = 0
 		const ptr = malloc.exports.malloc(file.length);
 
 		new Uint8Array(memory.buffer).set(encoder.encode(file), ptr);
 
 		const pixels = rt.exports.rt_render(ptr, file.length);
   }
-  self.postMessage("ready");
+  self.postMessage({ id: "ready" });
 
 })();
