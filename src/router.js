@@ -17,7 +17,8 @@ export default new Router({
     {
       path: '/editor',
       name: 'editor',
-      component: Editor
+      component: Editor,
+      props: (route) => ({ raw: route.query.raw || "" })
     }
   ]
 })

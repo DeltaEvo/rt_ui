@@ -14,48 +14,30 @@
 <script>
 import Render from "../components/Render"
 import SceneTree from "../components/SceneTree"
-import { parse } from "@iarna/toml"
+import { parse, stringify } from "@iarna/toml"
 import { set } from "dot-prop"
 
-const scene = parse(`
-name = "Perspective Cubes"
-width = 1280
-height = 800
-
-[camera]
-        type = "PERSPECTIVE"
-        position = { x = 0, y = 0, z = 0 }
-        rotation = { x = 0, y = 0, z = 0 }
-
-[[objects]]
-        type = "BOX"
-        material.type = "NORMAL"
-        radius = 0.4
-        min = { x = -0.25, y = -0.25, z = -0.25 }
-        max = { x = 0.25, y = 0.25, z = 0.25 }
-        position = { x = -0.5, y = 0, z = -3 }
-
-[[objects]]
-        type = "BOX"
-        material.type = "NORMAL"
-        radius = 0.4
-        min = { x = -0.25, y = -0.25, z = -0.25 }
-        max = { x = 0.25, y = 0.25, z = 0.25 }
-        position = { x = 0.5, y = 0, z = -20 }
-
-test = false
-`);
-
 export default {
+  props: ['raw'],
   data() {
     return {
-      scene,
       progress: 1
+    }
+  },
+  computed: {
+    scene: {
+      get() {
+        return parse(this.raw);
+      },
+      set(value) {
+        this.$router.push({ query: { raw: stringify(value) } })
+      }
     }
   },
   methods: {
     changeScene({ key, value }) {
       set(this.scene, key, value)
+      this.scene = this.scene;
     }
   },
   components: {

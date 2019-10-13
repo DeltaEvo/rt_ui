@@ -89,7 +89,7 @@ const encoder = new TextEncoder();
   self.onmessage = msg => {
     const { file, size } = msg.data
     
-    const canvas = new OffscreenCanvas(size.width, size.height);
+    const canvas = new OffscreenCanvas(size.width || 0, size.height || 0);
 
 	  const ctx = canvas.getContext('2d');
 
