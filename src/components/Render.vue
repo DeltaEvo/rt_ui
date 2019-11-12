@@ -18,13 +18,11 @@ export default {
     watch: {
         scene: {
             handler(val) {
-                console.log(stringify(val))
                 render({
                     file: stringify(val),
                     canvas: this.$el,
                     size: { width: val.width, height: val.height }
                 }, progress => this.$emit("progress", progress))
-                console.log("Scene watch")
             },
             deep: true
         }

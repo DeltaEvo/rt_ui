@@ -1,8 +1,11 @@
 <template>
     <div class="json-object">
-        <div class="json-member" v-for="(value, key) in data" :key="key">
-            <span>{{ key }}</span>
-            <span>:&nbsp;</span>
+        <div
+          class="json-member"
+          :class="{ collapsed: key in collapsed }"
+          v-for="(value, key) in data"
+          :key="key">
+            <span class="key" @click="onClick(key)">{{ key }}:&nbsp;</span>
             <json-tree
                 v-if="value !== null && typeof value === 'object'"
                 :data="value"
@@ -10,6 +13,7 @@
             ></json-tree>
             <template v-else>
                 <input
+                    class="value"
                     step="any"
                     :type="{ boolean: 'checkbox', number: 'number', string: 'text'}[typeof value]"
                     :value="value"
@@ -27,21 +31,60 @@
 <script>
 export default {
     name: 'json-tree',
-    props: ['data']
+    props: ['data'],
+    data() {
+        return { collapsed: {} };
+    },
+    methods: {
+        onClick(key) {
+            if (typeof this.data[key] == 'object') {
+                if (key in this.collapsed)
+                    this.$delete(this.collapsed, key)
+                else
+                    this.$set(this.collapsed, key, true)
+            }
+        }
+    }
 }
 </script>
 
 <style lang="stylus">
-.json-object {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
 .json-member {
     text-align: left;
+    color: #A8A8A8;
+
     & > .json-object {
         margin-left: 15px;
     }
+
+    &.collapsed > .json-object  {
+        height: 0;
+    }
+
+    &.collapsed > .key::after {
+        color: #E6E1E1;
+        content: "[...]";
+    }
+
+    .value {
+       font-size: inherit;
+       color: #E6E1E1;
+       background-color: transparent;
+       border: none;
+    }
+
+    .key {
+        cursor: pointer;
+    }
+}
+
+.json-object {
+    overflow: hidden;
+    font-size: 16px;
+    background-color: #3A3A3A;
+	color: #E6E1E1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 </style>

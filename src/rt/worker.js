@@ -3,7 +3,7 @@ const encoder = new TextEncoder();
 
 (async function() {
   const memory = new WebAssembly.Memory({
-    initial: 2,
+    initial: 200,
   });
 
   const {instance: malloc} = await WebAssembly.instantiateStreaming(
@@ -18,7 +18,6 @@ const encoder = new TextEncoder();
   );
 
   const global = {
-	  offset: 0,
     ctx: null,
     canvas: null,
 	  size: null
@@ -40,6 +39,15 @@ const encoder = new TextEncoder();
           );
           console.log('Write', msg);
         },
+        open() {
+         console.log('open', arguments)
+        },
+        close() {
+         console.log('open', arguments)
+        },
+        perror() {
+         console.log('perror', arguments)
+        },
         read(fd, address, size) {
           return -1;
         },
@@ -58,20 +66,21 @@ const encoder = new TextEncoder();
         get_image_error() {
           console.log('get_image_error', arguments);
         },
-        rt_render_update(pixels) {
+        free_image() {
+          console.log('free_image', arguments);
+        },
+        printf() {
+          console.log('printf', arguments);
+        },
+        rand() {
+          return Math.random() * 10000
+        },
+        rt_render_update(pixels, progress) {
           const pixbuf = new Uint8ClampedArray(
             memory.buffer,
             pixels,
             global.size.width * global.size.height * 4
           );
-
-          for (let i = global.offset * 4; i < (global.offset + global.size.width) * 4; i += 4) {
-            const tmp = pixbuf[i];
-            pixbuf[i] = pixbuf[i + 2];
-            pixbuf[i + 2] = tmp;
-            pixbuf[i + 3] = 255;
-          }
-          global.offset += global.size.width;
 
           const image = new ImageData(pixbuf, global.size.width);
           global.ctx.putImageData(image, 0, 0);
@@ -79,7 +88,7 @@ const encoder = new TextEncoder();
           self.postMessage({
             id: "render",
             bitmap,
-            progress: Math.min(global.offset / (global.size.width * global.size.height), 1) 
+            progress: Math.min(progress / (global.size.width * global.size.height), 1) 
           }, [bitmap])
         },
       },

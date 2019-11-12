@@ -12,4 +12,6 @@ body
   -moz-osx-font-smoothing grayscale
   text-align center
   color #2c3e50
+  background-color #A8A8A8
+  min-height 100vh
 </style>

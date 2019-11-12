@@ -2,12 +2,12 @@
   <div class="editor">
     <div class="progress" v-show="progress != 1" :style="`width: ${progress * 100}%`"></div>
     <scene-tree class="tree" :scene="scene" @change="changeScene"></scene-tree>
-    <render
-      class="render"
-      :style="`height: ${scene.height / scene.width * 100}%`"
-      :scene="scene"
-      @progress="value => progress = value"
-    ></render>
+    <div class="render">
+      <render
+        :scene="scene"
+        @progress="value => progress = value"
+      ></render>
+    </div>
   </div>
 </template>
 
@@ -57,16 +57,33 @@ export default {
     top: 0;
     left: 0;
     height: 3px;
-    background: #29d;
+    background: #FF9883;
   }
 
   & > .tree {
-    width: 100%;
+    width: 350px;
+    height: 100vh;
     padding: 12px;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    &::-webkit-scrollbar {
+      width: 0 !important
+    }
+
+    & > .json-member {
+      color: #FF9883;
+    }
   }
 
   & > .render {
-    width: 80vw;
+    width: 100%;
+    height: 100vh;
+    overflow-y: scroll;
+    canvas {
+      width: 100%;
+    }
   }
 }
 </style>

@@ -1,8 +1,11 @@
 <template>
   <div class="home">
-    Hello World I'm a Unicorn <br>
-    <router-link :to="{ name: 'editor', query: { raw: scene } }">Editor</router-link><br>
-    <upload @input="onUpload">Upload</upload>
+    <router-link class="item" :to="{ name: 'editor', query: { raw: scene } }">
+      Editor
+    </router-link>
+    <upload class="item" @input="onUpload">
+      Upload
+    </upload>
   </div>
 </template>
 
@@ -56,6 +59,24 @@ export default {
 }
 </script>
 
-<style>
+<style lang="stylus">
+  .home {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0 15vw;
 
+   .item {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      text-decoration: none;
+      color: #FF9883;
+      background-color: #3A3A3A;
+      width: 200px;
+      height: 200px;
+    }
+  }
 </style>
