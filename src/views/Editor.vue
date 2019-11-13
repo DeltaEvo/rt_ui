@@ -1,7 +1,7 @@
 <template>
   <div class="editor">
     <div class="progress" v-show="progress != 1" :style="`width: ${progress * 100}%`"></div>
-    <scene-tree class="tree" :scene="scene" @change="changeScene"></scene-tree>
+    <scene-tree class="tree" :scene="scene" @change="changeScene" @delete="deleteScene"></scene-tree>
     <div class="render">
       <render
         :scene="scene"
@@ -15,7 +15,7 @@
 import Render from "../components/Render"
 import SceneTree from "../components/SceneTree"
 import { parse, stringify } from "@iarna/toml"
-import { set } from "dot-prop"
+import * as dot from "dot-prop"
 
 export default {
   props: ['raw'],
@@ -36,7 +36,11 @@ export default {
   },
   methods: {
     changeScene({ key, value }) {
-      set(this.scene, key, value)
+      dot.set(this.scene, key, value)
+      this.scene = this.scene;
+    },
+    deleteScene(key) {
+      dot.delete(this.scene, key)
       this.scene = this.scene;
     }
   },
@@ -72,9 +76,6 @@ export default {
       width: 0 !important
     }
 
-    & > .json-member {
-      color: #FF9883;
-    }
   }
 
   & > .render {

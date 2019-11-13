@@ -5,10 +5,11 @@
           :class="{ collapsed: key in collapsed }"
           v-for="(value, key) in data"
           :key="key">
-            <span class="key" @click="onClick(key)">{{ key }}:&nbsp;</span>
+            <span class="key" @click="onClick(key)" @contextmenu.prevent="$emit('menu', { $event,  key })">{{ key }}:&nbsp;</span>
             <json-tree
                 v-if="value !== null && typeof value === 'object'"
                 :data="value"
+                @menu="({ key: vKey, $event }) => $emit('menu', { key: `${key}.${vKey}`, $event })"
                 @change="({ key: vKey, value }) => $emit('change', { key: `${key}.${vKey}`, value })"
             ></json-tree>
             <template v-else>
@@ -81,7 +82,6 @@ export default {
 .json-object {
     overflow: hidden;
     font-size: 16px;
-    background-color: #3A3A3A;
 	color: #E6E1E1;
     display: flex;
     flex-direction: column;
