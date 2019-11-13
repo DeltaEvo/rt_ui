@@ -12,6 +12,7 @@
     "dot-prop": "^5.1.0",
     "vue": "^2.6.10",
     "vue-context": "^4.1.1",
+    "vue-meta": "^2.3.1",
     "vue-router": "^3.0.3"
   },
   "devDependencies": {

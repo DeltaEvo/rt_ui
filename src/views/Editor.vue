@@ -24,6 +24,11 @@ export default {
       progress: 1
     }
   },
+  metaInfo() {
+    return {
+      title: this.scene.name
+    }
+  },
   computed: {
     scene: {
       get() {
